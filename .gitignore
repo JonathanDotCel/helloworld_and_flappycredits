@@ -1,0 +1,65 @@
+
+#use .cmd for personal .bat files
+*.cmd
+
+#compiled
+*.temp
+unirom_r.exe
+unirom_b.exe
+
+#easier to remember
+headrom.bat
+makerom.bat
+header.bat
+send2.bat
+send3.bat
+bintest.bat
+dumptest.bat
+
+
+#nops last used port
+comport.txt
+
+
+#my todo
+notes.txt
+
+#os stuff
+Desktop.ini
+
+#working directories
+/junk/
+/debug/
+/stuff/
+/release_tools/
+.vs/
+Debug/
+
+
+#decompilation research
+/decom*/
+/*decom*/
+
+
+
+#stuff and or things
+*.idb
+*.cpe
+*.map
+*.sym
+*.temp
+*.crunched
+
+stdout.txt
+stderr.txt
+
+#nops dumps
+dump*
+
+
+#dosbox stuff
+dosbox.conf
+dosbox.exe
+sdl.dll
+sdl_net.dll
+
