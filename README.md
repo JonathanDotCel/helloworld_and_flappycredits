@@ -9,7 +9,8 @@
 	There's also a TTY device example to log printfs over Sio.
 
 	First:
-	Big thanks to Nicolas Noble over at https://github.com/grumpycoders/pcsx-redux/ for the toolchain/build environment!
+	Big thanks to Nicolas Noble over at https://github.com/grumpycoders/pcsx-redux/ 
+	for the toolchain/build environment!
 
 
 
@@ -39,8 +40,11 @@
 		The pads use the kernel
 
 	Can I use some pre-made libraries?
-		For PSYQ they must be converted with this tool:	https://github.com/grumpycoders/pcsx-redux/tree/main/tools/psyq-obj-parser
-		For psn00b SDK, I'm not sure. Let me know how it goes!
+		For PSYQ:
+			they must be converted with this tool:	
+		    https://github.com/grumpycoders/pcsx-redux/tree/main/tools/psyq-obj-parser
+		For psn00b SDK:
+		  	I'm not sure. Let me know how it goes!
 
 
 
