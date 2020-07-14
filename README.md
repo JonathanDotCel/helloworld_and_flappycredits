@@ -9,7 +9,7 @@
 	There's also a TTY device example to log printfs over Sio.
 
 	First:
-	Big thanks to Nicolas Noble over at https://github.com/grumpycoders/pcsx-redux/ for the toolchain!
+	Big thanks to Nicolas Noble over at https://github.com/grumpycoders/pcsx-redux/ for the toolchain/build environment!
 
 
 
@@ -28,6 +28,9 @@
 		Goto Settings | Resources | File Sharing, and add this folder
 
 		Run buildme.bat to build.
+
+		Docker will do a one-time download of the build image (see intro) and to the thing.
+		
 
 
 # Questions
