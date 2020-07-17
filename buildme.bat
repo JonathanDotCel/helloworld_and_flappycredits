@@ -1,11 +1,11 @@
 
 @echo off
 
-del unirom_b.exe
-del unirom_b.elf
-del unirom_b.o
-del unirom_b.sym
-del unirom_b.map
+del helloworld.exe
+del helloworld.elf
+del helloworld.o
+del helloworld.sym
+del helloworld.map
 del *.temp
 
 call dockermake -f buildme.mk all
