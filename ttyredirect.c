@@ -83,8 +83,6 @@ char deviceName[] = "tty";
 char deviceDesc[] = "SIO TTY";
 
 
-
-
 struct ttyDevice{
 
     char * deviceName;
@@ -145,6 +143,7 @@ void InstallTTY(){
 
     ulong wasCritical = EnterCritical();
 
+    // Some of these functions need a little extra stack.
     __asm__ volatile( "addiu $sp, $sp, -0x08\n\t" );
     
     // Close stdin
