@@ -19,6 +19,7 @@ del *.cpe
 del *.dep
 del *.temp
 del *.crunch
+del *.o
 
 del comport.txt
 

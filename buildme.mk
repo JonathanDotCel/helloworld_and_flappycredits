@@ -35,14 +35,13 @@ utility.c \
 drawing.c \
 gpu.c \
 pads.c \
-ttyredirect.s \
+ttyredirect.c \
 flappycredits.c \
+
 
 
 include ./nugget/common.mk
 
-
 LDFLAGS += -Xlinker --defsym=TLOAD_ADDR=0x80010000
-LDFLAGS += -Xlinker --defsym=ROM_MODE=0x00
 
 

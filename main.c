@@ -46,9 +46,9 @@ int main(){
 	// Clear the text buffer
 	InitBuffer();
 	
-	installtty();	
-	NewPrintf( "You can now use NewPrintf() functions!\n" );
-
+	InstallTTY();
+	//NewPrintf( "You can now use NewPrintf() functions!\n" );
+	
 	// Init the pads after the GPU so there are no active
 	// ints and we get one frame of visual confirmation.
 	
@@ -58,6 +58,7 @@ int main(){
 	NewPrintf( "Init Pads...\n" );
 	InitPads();
 	
+
 	// Main loop
 	while ( 1 ){
 		
@@ -66,6 +67,8 @@ int main(){
 		ClearScreenText();
 		
 		C64Border();
+
+		
 		
 		Blah( "\n\n\n\n\n\n\n\n\n                Hello world!     -     Frame %d\n\n\n", GetFrameCount() );
 		Blah( "        Dpad  : move block\n" );
@@ -73,7 +76,6 @@ int main(){
 		Blah( "        O     : reboot\n" );
 		Blah( "        R4    : debug\n" );  // there's no r4
 		
-
 		DoStuff();
 
 		Draw();

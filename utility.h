@@ -41,4 +41,13 @@ void rom_load_caetla_normal();
 void rom_load_caetla_boot();
 void rom_load_caetla_comms();
 
+// Some kernel functions for the TTY redirect
+
+void AddDevice( void * deviceInfo );
+void RemoveDevice( char * deviceName );
+void PrintDevices();
+void CloseFile( ulong fileHandle );
+ulong OpenFile( char * fileName, ulong accessMode );
+
+
 #endif // !UTILITY_H

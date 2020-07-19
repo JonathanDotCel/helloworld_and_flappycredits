@@ -3,8 +3,11 @@
 #ifndef TTYREDIRECT_H
 #define TTYREDIRECT_H
     
-    extern unsigned long installtty();
-    extern unsigned long isttyinstalled();
+    void InstallTTY();
 
+    const extern unsigned long __ktty_src;
+    const extern unsigned long __ktty_dest_start;
+    const extern unsigned long __ktty_length;
+    
 #endif
 

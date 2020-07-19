@@ -6,6 +6,7 @@
 *.temp
 unirom_r.exe
 unirom_b.exe
+*.lnk
 
 #easier to remember
 headrom.bat

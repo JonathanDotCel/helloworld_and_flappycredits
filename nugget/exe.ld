@@ -33,9 +33,10 @@ ENTRY(_start)
 TLOAD_ADDR = DEFINED(TLOAD_ADDR) ? TLOAD_ADDR : 0x80010000;
 
 MEMORY {
-    loader      : ORIGIN = (TLOAD_ADDR - 0x800), LENGTH = 2048
+    loader      : ORIGIN = (TLOAD_ADDR - 0x800), LENGTH = 2048    
     ram (rwx)   : ORIGIN = 0x80010000, LENGTH = 2M - 0x10000
     dcache      : ORIGIN = 0x1f800000, LENGTH = 0x400
+    kttyram (rwx): ORIGIN = 0x0000C000, LENGTH = 0x2000
 }
 
 __ram_top       = ORIGIN(ram) + LENGTH(ram);
@@ -50,7 +51,10 @@ __fdata_len     = (__fdata_end - __fdata_start);
 
 __stack_start   = ORIGIN(ram) + LENGTH(ram);
 
+__ktty_length = (__ktty_dest_end - __ktty_dest_start);
+
 SECTIONS {
+
     .PSX_EXE_Header : {
         /*
             0x0000 - 0x0007 : "PS-X EXE"
@@ -112,9 +116,27 @@ SECTIONS {
         KEEP(*(.fini))
     } > ram
 
+    /* TTY Redirect */
+    __ktty_src = .;
+    .kttytext : {
+        
+        __ktty_dest_start = ABSOLUTE(.);
+        
+        KEEP(*(.kttytext))
+        
+        __ktty_dest_end = ABSOLUTE(.);
+
+    } > kttyram AT > ram    
+    . = ALIGN(16);
+    
+
+
     . = ALIGN(16);
     __text_end = .;
     __ftext_end = ABSOLUTE(.);
+
+
+
 
     __fdata_start = ABSOLUTE(.);
 
@@ -129,9 +151,7 @@ SECTIONS {
         __init_array_start = .;
         KEEP (*(SORT(.init_array.*)))
         KEEP (*(.init_array))
-
-        __rom_mode = .;
-        LONG( ROM_MODE );
+        
 
         . = ALIGN(16);
         KEEP (*crtbegin.o(.ctors))
@@ -166,12 +186,17 @@ SECTIONS {
         *(.data1)
         *(.got.plt)
         *(.got)
-    } > ram
-
+        /* pad file to be a multiple of 2048 bytes.  Needed for loading from CD-ROM. */
+        . = ALIGN( 2048 );
+    } > ram    
     . = ALIGN(4);
+
+
     __data_end = .;
+
     __fdata_end = .;
     . = ALIGN(4);
+
     __bss_start = .;
     .sbss (NOLOAD) : {
         *(.dynsbss)
@@ -186,7 +211,8 @@ SECTIONS {
     __bss_end = .;
 
     __heap_start = .;
-
+    
+    
     __end = .;
 
     /* pad file to be a multiple of 2048 bytes.  Needed for loading from CD-ROM. */

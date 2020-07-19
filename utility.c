@@ -117,3 +117,33 @@ void UnloadMe(){
 }
 
 
+void AddDevice( void * deviceInfo ){
+	register int cmd __asm__("$9") = 0x47;
+	__asm__ volatile("" : "=r"(cmd) : "r"(cmd));
+	return ((void(*)(void*))0xB0)(deviceInfo);
+}
+
+// lowercase
+void RemoveDevice( char * deviceName ){
+	register int cmd __asm__("$9") = 0x48;
+	__asm__ volatile("" : "=r"(cmd) : "r"(cmd));
+	return ((void(*)(char*))0xB0)(deviceName);
+}
+
+void PrintDevices(){
+	register int cmd __asm__("$9") = 0x49;
+	__asm__ volatile("" : "=r"(cmd) : "r"(cmd));
+	return ((void(*)(void))0xB0)();
+}
+
+void CloseFile( ulong fileHandle ){
+	register int cmd __asm__("$9") = 0x36;
+	__asm__ volatile("" : "=r"(cmd) : "r"(cmd));
+	((void(*)(ulong))0xB0)( fileHandle );
+}
+
+ulong OpenFile( char * fileName, ulong accessMode ){
+	register int cmd __asm__("$9") = 0x32;
+	__asm__ volatile("" : "=r"(cmd) : "r"(cmd));
+	return ((ulong(*)(char*,ulong))0xB0)( fileName, accessMode );
+}
