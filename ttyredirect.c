@@ -54,7 +54,7 @@ void __attribute__((section(".kttytext"))) KTTYAction( struct SIOFCB * fcb, ulon
         bailout = 0;
         
         // SR_TXU | SR_TXRDY
-        while( *(uchar*)SIO_STAT & 5 == 0 ){
+        while( (*(uchar*)SIO_STAT & 0x05) == 0 ){
             if ( bailout++ > 80 )
                 break;
         }

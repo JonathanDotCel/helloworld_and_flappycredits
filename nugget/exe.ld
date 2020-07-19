@@ -216,7 +216,7 @@ SECTIONS {
     __end = .;
 
     /* pad file to be a multiple of 2048 bytes.  Needed for loading from CD-ROM. */
-    . = ADDR(.text) - 0x800;
+    /*. = ADDR(.text) - 0x800;*/
 
     /DISCARD/ : { *(.MIPS.abiflags) }
 
