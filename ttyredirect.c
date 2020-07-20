@@ -1,11 +1,9 @@
 
-
-#ifndef TTYC_H
-#define TTYC_H
-
 #include "ttyredirect.h"
 #include "littlelibc.h"
 #include "utility.h"
+
+#include "drawing.h"
 
 #define SIO_DATA 0x1F801050
 #define SIO_STAT 0x1F801054
@@ -55,7 +53,7 @@ void __attribute__((section(".kttytext"))) KTTYAction( struct SIOFCB * fcb, ulon
         
         // SR_TXU | SR_TXRDY
         while( (*(uchar*)SIO_STAT & 0x05) == 0 ){
-            if ( bailout++ > 80 )
+            if ( bailout++ > 8000 )
                 break;
         }
 
@@ -77,7 +75,7 @@ ulong __attribute__((section(".kttytext"))) KTTYReturn0(){
 
 #pragma GCC pop options
 
-#endif
+
 
 char deviceName[] = "tty";
 char deviceDesc[] = "SIO TTY";
@@ -138,14 +136,21 @@ struct ttyDevice{
 
 };
 
+char ttyInstalled = 0;
 
-void InstallTTY(){
+ulong IsTTYInstalled(){
+    return ttyInstalled;
+}
 
-    ulong wasCritical = EnterCritical();
 
-    // Some of these functions need a little extra stack.
-    __asm__ volatile( "addiu $sp, $sp, -0x08\n\t" );
-    
+
+void RemoveTTY(){
+
+    char* namePointer = (char*)&deviceName;
+
+    if ( !ttyInstalled )
+        return;
+
     // Close stdin
     CloseFile( 0 );
     
@@ -153,9 +158,23 @@ void InstallTTY(){
     CloseFile( 1 );
     
     // Remove the dummy TTY device
-    RemoveDevice( deviceName );
+    RemoveDevice( (char*)&namePointer );
+
+}
+
+void InstallTTY(){
+
+    if ( ttyInstalled )
+        return;
+
+    ulong wasCritical = EnterCritical();
+    
+    RemoveTTY();
     
     NewMemcpy( (char*)&__ktty_dest_start, (char*)&__ktty_src, (ulong)&__ktty_length );
+
+    // need a wee bit more stack for these ones...
+    __asm__ volatile( "addiu $sp, $sp, -0x08\n\t" );
 
     AddDevice( (void*)&defaultTTYDevice );
 
@@ -168,5 +187,21 @@ void InstallTTY(){
     if ( !wasCritical )
         ExitCritical();
 
+    ttyInstalled = 1;
     
+}
+
+
+void TTYViewMemoryAllocation(){
+
+    ClearScreenText();
+
+    Blah( "\n\n\n\n\n\n" );
+    Blah( "__ktty_src %x\n", (ulong)&__ktty_src );    
+    Blah( "__ktty_length %x\n", (ulong)&__ktty_length );
+    Blah( "__ktty_dest_start %x\n", (ulong)&__ktty_dest_start );
+    Blah( "__ktty_dest_end %x\n", (ulong)&__ktty_dest_end );
+
+    HoldMessage();
+
 }

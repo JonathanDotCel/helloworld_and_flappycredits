@@ -46,9 +46,6 @@ int main(){
 	// Clear the text buffer
 	InitBuffer();
 	
-	InstallTTY();
-	//NewPrintf( "You can now use NewPrintf() functions!\n" );
-	
 	// Init the pads after the GPU so there are no active
 	// ints and we get one frame of visual confirmation.
 	
@@ -57,7 +54,9 @@ int main(){
 
 	NewPrintf( "Init Pads...\n" );
 	InitPads();
-	
+
+	InstallTTY();
+	NewPrintf( "You can now use NewPrintf() functions!\n" );	
 
 	// Main loop
 	while ( 1 ){

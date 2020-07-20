@@ -11,7 +11,7 @@ pause
 REM Regular Build Stuff
 
 del *.rom
-del *.exe
+REM del *.exe
 del *.sym
 del *.map
 del *.obj
