@@ -7,9 +7,6 @@
 *.lnk
 
 #easier to remember
-headrom.bat
-makerom.bat
-header.bat
 send2.bat
 send3.bat
 bintest.bat
@@ -18,7 +15,6 @@ dumptest.bat
 
 #nops last used port
 comport.txt
-
 
 #my todo
 notes.txt
@@ -34,12 +30,9 @@ Desktop.ini
 .vs/
 Debug/
 
-
 #decompilation research
 /decom*/
 /*decom*/
-
-
 
 #stuff and or things
 *.idb
@@ -54,11 +47,4 @@ stderr.txt
 
 #nops dumps
 dump*
-
-
-#dosbox stuff
-dosbox.conf
-dosbox.exe
-sdl.dll
-sdl_net.dll
 

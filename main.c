@@ -1,13 +1,6 @@
-
-
-// 
-// GPL BEER LICENSE.
-// It's the same as the GPL3 with some additions:
-// - if you fork it you must send me a beer and leave the original headers
-// - Give a nice clear credit if you use any part of the code elsewhere!
-// - only add credits; never remove.
-// - change the name a bit if you fork: "Unirom NX", etc. Has to sound cool.
-// 
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 // 
 // Standard kinda fare though, no explicit or implied warranty.
 // Any issues arising from the use of this software are your own.
@@ -55,8 +48,9 @@ int main(){
 	NewPrintf( "Init Pads...\n" );
 	InitPads();
 
-	InstallTTY();
-	NewPrintf( "You can now use NewPrintf() functions!\n" );	
+    // Enable this if you're not inheriting a TTY redirect device from Unirom, n00bROM, etc
+	//InstallTTY();
+	//NewPrintf( "You can now use NewPrintf() functions!\n" );	
 
 	// Main loop
 	while ( 1 ){
