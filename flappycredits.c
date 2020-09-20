@@ -14,7 +14,7 @@
 #include "littlelibc.h"
 #include "drawing.h"
 #include "pads.h"
-
+#include "utility.h"
 
 #define STATE_INTRO 0
 #define STATE_PLAYING 1
@@ -219,6 +219,7 @@ void FlappyCredits(){
 		ClearScreenText();
 		MonitorPads();
 		
+
 		DrawBG();
 		
 		if ( cState == STATE_INTRO ){
@@ -358,8 +359,7 @@ void FlappyCredits(){
 		// flaps per second
 		
 		Draw();
-		
-		
+        
 		if ( cState != STATE_OUTRO ){
 			
 			// Since it doesn't matter how long we press the key

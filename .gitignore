@@ -41,6 +41,10 @@ Debug/
 *.sym
 *.temp
 *.crunched
+*.dep
+*.o
+*.elf
+
 
 stdout.txt
 stderr.txt

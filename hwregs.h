@@ -11,5 +11,9 @@
 #define IMASK 0xBF801074
 #define pIMASK *(volatile ulong*)IMASK
 
+// 0x10 bytes into the scratch pad
+// anywhere's good, really, but it's 0x10 long
+#define PADBUFFER 0x1F800010
+#define PAD2BUFFER 0x1F800020
 
 #endif

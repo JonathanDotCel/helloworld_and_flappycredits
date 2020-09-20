@@ -33,7 +33,7 @@ void DoStuff();
 
 int main(){
 	
-	ResetEntryInt();
+	//ResetEntryInt();
 	ExitCritical();
 
 	// Clear the text buffer

@@ -4,16 +4,15 @@
 
 # Hello world! + Flappy Credits
 	
-	Example bare-metal-ish code to get the pads + gpu going without using Sony's PS1 libraries.
+	Example bare-metal code to get the pads + gpu going without using Sony's PS1 libraries.
 
 	There's also a TTY device example to log printfs over Sio.
 
 	First:
 	Big thanks to Nicolas Noble over at https://github.com/grumpycoders/pcsx-redux/ 
 	for the toolchain/build environment!
-
-
-
+    
+    
 # Installation
 
 	Brief:
@@ -36,8 +35,6 @@
 
 # Questions
 
-	Bare-metal-ish?
-		The pads use the kernel
 
 	Can I use some pre-made libraries?
 		For PSYQ:

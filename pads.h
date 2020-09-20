@@ -34,13 +34,30 @@
 #endif
 
 
+// Mode bits; normally you'd find these in the SIO code
+#define MR_SB_00 0x0
+#define MR_SB_01 0x40
+#define MR_SB_10 0x80
+#define MR_SB_11 0xC0
+#define MR_P_EVEN 0x20
+#define MR_PEN 0x10
+#define MR_CHLEN_5 0x0
+#define MR_CHLEN_6 0x4
+#define MR_CHLEN_7 0x8
+#define MR_CHLEN_8 0xC
+#define MR_BR_1 0x1
+#define MR_BR_16 0x2
+#define MR_BR_64 0x3
+
+
 void InitPads();
 void PadStop();
 int AnythingPressed();
-int Released( ulong inButton );
-int Held( ulong inButton );
+int Released( unsigned long inButton );
+int Held( unsigned long inButton );
 void MonitorPads();
 unsigned long GetPadVals();
+
 
 
 #endif // !PADS_H

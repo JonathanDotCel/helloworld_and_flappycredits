@@ -223,7 +223,7 @@ void VSync(){
 
 	// Should probably acknowledge this int
 	// if the pads weren't about to do that.
-	//pISTAT ^= INT_VBLANK;
+	pISTAT ^= INT_VBLANK;
 
 	// Restore the old mask state
 	pIMASK = oldMask;
