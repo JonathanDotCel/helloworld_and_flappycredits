@@ -16,7 +16,7 @@
 #include "drawing.h"
 #include "utility.h"
 
-
+// Example: also possible via a little assembly fragment
 // inc_font.tim via exe_wrapper.asm
 extern ulong xfont;
 
@@ -154,14 +154,10 @@ void EndDrawing(){
 }
 
 
-
-
-
 // Flips the display area to the top or bottom of VRAM 
 // so we can be display frame 0 while drawing frame 1
 // Without it you'll get a little page tearing / flickering.
 // The 2nd page sits at y=SCREEN_HEIGHT (240) in VRAM - right below the first.
-
 
 void Flip(){
 	
@@ -203,8 +199,9 @@ void Flip(){
 }
 
 
-// You can turn off interrupts and still get the VBlank bit
-// set, so e.g. entercritical and wait for it to be set...
+// VBlank bit it still set even with ints disabled.
+// set, so e.g. EnterCritical and wait loop+poll it.
+// The BIOS does this, so it's not as jank as it sounds.
 
 void VSync(){
 

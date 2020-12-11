@@ -11,7 +11,6 @@
 #ifndef  MAINC
 #define MAINC
 
-
 // variadic logging
 #include <stdarg.h>
 #include "main.h"
@@ -29,7 +28,13 @@
 #include "flappycredits.h"
 #include "gpu.h"
 
+//
+// Protos
+//
+
 void DoStuff();
+
+
 
 int main(){
 	
@@ -40,7 +45,7 @@ int main(){
 	InitBuffer();
 	
 	// Init the pads after the GPU so there are no active
-	// ints and we get one frame of visual confirmation.
+	// interrupts and we get one frame of visual confirmation.
 	
 	NewPrintf( "Init GPU...\n" );
 	InitGPU();
@@ -60,9 +65,7 @@ int main(){
 		ClearScreenText();
 		
 		C64Border();
-
-		
-		
+        
 		Blah( "\n\n\n\n\n\n\n\n\n                Hello world!     -     Frame %d\n\n\n", GetFrameCount() );
 		Blah( "        Dpad  : move block\n" );
 		Blah( "        X     : flappy credits\n" );
