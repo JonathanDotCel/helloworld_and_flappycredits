@@ -10,7 +10,7 @@
 
 	First:
 	Big thanks to Nicolas Noble over at https://github.com/grumpycoders/pcsx-redux/ 
-	for the toolchain/build environment!
+	for the "nugget" toolchain/build environment!
     
     
 # Installation
