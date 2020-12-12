@@ -29,7 +29,7 @@
 
 		Run buildme.bat to build.
 
-		Docker will do a one-time download of the build image (see intro) and to the thing.
+		Docker will do a one-time download of the build image (see intro) and then do the thing.
 		
 
 
