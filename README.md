@@ -18,8 +18,11 @@
 	Brief:
 
 		Install docker
-		Whitelist this folder
+		Whitelist this folder *
 		Run the .bat
+
+		If you can't find it:
+		* Settings (icon) -> Resources -> File Sharing -> Little blue (+) icon -> add the folder
 
 	Instructions:
 
