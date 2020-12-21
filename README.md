@@ -18,8 +18,11 @@
 	Brief:
 
 		Install docker
-		Whitelist this folder
+		Whitelist this folder *
 		Run the .bat
+
+		If you don't have this option, you're using an up to date version of Win10 and can skip step 2!
+		* Settings (icon) -> Resources -> File Sharing -> Little blue (+) icon -> add the folder
 
 	Instructions:
 
