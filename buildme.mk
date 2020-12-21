@@ -30,14 +30,14 @@ SRCS = \
 littlelibc.c \
 main.c \
 nugget/crt0/crt0.s \
-assemblywrapper.s \
+includedfileslist.s \
 utility.c \
 drawing.c \
 gpu.c \
 pads.c \
 ttyredirect.c \
 flappycredits.c \
-
+timloader.c \
 
 
 include ./nugget/common.mk

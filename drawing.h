@@ -6,6 +6,8 @@
 #ifndef DRAWING_H
 #define DRAWING_H
 
+#include "timloader.h"
+
 //
 // Display / GPU vars
 //
@@ -29,6 +31,27 @@
 #define CHARWIDTH 8
 #define CHARHEIGHT 8
 #define HALFCHAR 4
+
+typedef struct Sprite{
+
+    // Size + Position we intend to draw to on screen
+    // in the future we'll add rotation, etc
+    unsigned long xPos;
+    unsigned long yPos;
+    unsigned long width;
+    unsigned long height;
+    
+    // The TIM data in VRAM
+    // e.g. position, palette location etc
+    TIMData * data;
+
+    //
+    // Purely for example
+    //
+    int shiftedVeloX;
+    int shiftedVeloY;
+
+} Sprite;
 
 // Vsycn, draw, timing, etc
 void Draw();

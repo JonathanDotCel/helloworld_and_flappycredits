@@ -5,6 +5,10 @@
 #ifndef GPU_H
 #define GPU_H
 
+#include "timloader.h"
+#include "drawing.h"
+
+#define TEXPAGE_WIDTH 64
 
 void InitGPU();
 void DrawFontBuffer();
@@ -19,6 +23,13 @@ void DrawTile( short inX, short inY, short inWidth, short inHeight, unsigned lon
 
 // Test function
 void PrintChar( char inChar );
+void SendToVRAM( unsigned long memAddr, short xPos, short yPos, short width, short height );
 
+
+// Draw to screen using a TIM we've uploaded to RAM
+void DrawTIMData( TIMData * inData, unsigned long inX, unsigned long inY, unsigned long inWidth, unsigned long inHeight );
+
+// DrawTIMData - but with pos/width defined in the Sprite struct
+void DrawSprite( Sprite * inSprite );
 
 #endif

@@ -15,6 +15,8 @@
 #include "hwregs.h"
 #include "drawing.h"
 #include "utility.h"
+#include "timloader.h"
+#include "drawing.h" // the sprite type
 
 // Example: also possible via a little assembly fragment
 // inc_font.tim via exe_wrapper.asm
@@ -283,9 +285,9 @@ void InitGPU(){
 		
 
 	}
-	
-	// e.g. pGP0 = 0xe1000688;
-	pGP0 = GP1_TEXPAGE | PAGE_8_BIT | PAGE_DITHER | PAGE_ALLOW_DISPLAY_AREA_DRAWING | 8;
+    
+
+    //SetPageDepth( 8, 1 );
 	WaitGPU();
 	
 	Flip();
@@ -303,12 +305,13 @@ void InitGPU(){
 }
 #pragma GCC pop options
 
+//
 // Various GPU routines used in Greentro, Herben's Import Player, etc.
+//
 
 // WaitGPU - waits until GPU ready to recieve commands
 void WaitGPU(){
-	
-	//char wasInCritical = EnterCritical();
+    
 	int waitCounter = 0;	
 	int nullVal = 0;
 
@@ -390,9 +393,11 @@ void SendList( ulong listAddr ){
 
 void SendToVRAM( ulong memAddr, short xPos, short yPos, short width, short height ){
 	
+    NewPrintf( "Uploading to %d,%d %d,%d\n", xPos, yPos, width, height );
+
 	int i = 0;
 	int numDWords = ( width * height );
-
+    
 	WaitIdle();
 
 	// DMA Off
@@ -417,16 +422,12 @@ void SendToVRAM( ulong memAddr, short xPos, short yPos, short width, short heigh
 // 8 pages off the screen
 // 2 pixels from the top
 #define FNTLoadX 512
-#define FNTLoadY 2
+#define FNTLoadY 16
 
 // 8 pages off the screen
 // 0 pixels from the top
 #define CLUTLoadX 512
 #define CLUTLoadY 0
-
-// Remember these little bastards are signed
-#define fontClutX 512
-#define fontClutY 0
 
 // For the font preview
 // (e.g. check that your entire font is mapped properly)
@@ -436,27 +437,94 @@ void SendToVRAM( ulong memAddr, short xPos, short yPos, short width, short heigh
 
 void UploadFont(){
 	
-	// 8 bit TIM, found via editing first pixel and comparing in hex editor
-	// but there's proper documentation somewhere. This is the first
-	// actual pixel data in the TIM
-	// remember to set the tex page to the same bit depth!
-	ulong imageOffset = 0x220;		// 8 bit TIMs
-	//ulong imageOffset = 0x40;		// 4 bit TIMs
-								
-	ulong CLUTOffset = 0x14;		// The CLUT offset in the same file
-
+    /*    
+    // E.g.
 	// @ 640x0	
 	SendToVRAM( ((ulong)&xfont + imageOffset), FNTLoadX, FNTLoadY, 128, 48 );
-
 	// @ 640 x 256
 	SendToVRAM( (ulong)&xfont + CLUTOffset, CLUTLoadX, CLUTLoadY, 512, 1 );
-	
+	*/
+
+    TIMData nullTimData;
+    UploadTim( (char*)&xfont, &nullTimData, CLUTLoadX, CLUTLoadY, FNTLoadX, FNTLoadY );
+
+}
+
+void SetPageDepth( int inPage, char in8Bit ){
+    pGP0 = GP1_TEXPAGE | (PAGE_8_BIT* in8Bit) | PAGE_DITHER | PAGE_ALLOW_DISPLAY_AREA_DRAWING | inPage;
 }
 
 
+#pragma GCC push options
+#pragma GCC optimize("-O0")
+
+// Quick n dirty sprite draw, using the info parsed from a TIM header
+// Note: this is likely to be a ton slower than using a linked list / OT!
+
+void DrawSprite( Sprite * inSprite ){
+
+    //NewPrintf( "X y w h %d, %d, %d, %d\n", inSprite->xPos, inSprite->yPos, inSprite->width, inSprite->height );
+    DrawTIMData( inSprite->data, inSprite->xPos, inSprite->yPos, inSprite->width, inSprite->height );
+    
+}
+
+void DrawTIMData( TIMData * inData, ulong inX, ulong inY, ulong inWidth, ulong inHeight ){   
+    
+    // x,y - Typical Order: TL, BL, TR, BR    
+    // vertex data
+    short L = inX;
+    ulong T = inY;
+    short R = L + inWidth;
+    ulong B = T + inHeight;
+    
+    // Same thing for each letter's UV
+    // The UV is relative to the texture page (unlike textured rectangle, the texpage is specified below)
+    uchar uvLeft  = inData->pixU;
+    ushort uvTop = inData->pixV;
+    uchar uvRight    = uvLeft + (inData->vramWidth * 2);
+    ushort uvBottom = uvTop + (inData->vramHeight * 1);
+    
+    // Now we have our four points
+    // TODO: we should allow some sort of rotation here
+    // based around a centre point
+    ushort uvTopLeft    = (uvTop << 8 ) | uvLeft;
+    ushort uvBottomLeft = (uvBottom << 8 ) | uvLeft;
+    ushort uvTopRight   = (uvTop << 8 ) | uvRight;
+    ushort uvBottomRight = (uvBottom << 8 ) | uvRight;
+
+    // May be helpful to visualise this as splitting the VRAM
+    // 16-pix long rows, 64 of them per line        
+    ulong clutPos = ( inData->clutY << 6 ) | ( inData->clutX / 16 );        
+        
+    WaitGPU();
+    
+    // functionally similar to SetPageDepth
+    ulong pageConfig = ( PAGE_8_BIT | inData->texPage) << 16;
+
+    pGP0 = 0;
+    pGP0 = 0x2C808080;                      // Command + Color    
+
+    pGP0 = (T << 16) | (L);                 // vert T,L
+    pGP0 = (clutPos << 16) | uvTopLeft;
+
+    pGP0 = (B << 16) | (L);                 // vert B,L
+    
+    pGP0 = pageConfig | uvBottomLeft;
+
+    pGP0 = (T << 16) | (R);                 // vert B,L
+    pGP0 = uvTopRight;
+
+    pGP0 = (B << 16) | (R);                 // vert B,L
+    pGP0 = uvBottomRight;
+    
+}
+
+#pragma GCC pop options
+
+
 // Where's the font cursor?
-ulong cursorX = 0;
-ulong cursorY = 0;
+static ulong cursorX = 0;
+static ulong cursorY = 0;
 
 // TileSize / TileSpacing - For padding or stretching
 #define TS 8
@@ -518,18 +586,21 @@ void DrawTile( short inX, short inY, short inWidth, short inHeight, ulong inColo
 }
 
 
+
+
 void DrawFontBuffer(){
 	
+    SetPageDepth( 8, 1 );
+
 	ulong logBuffer = GetLogBuffer();
 	char readChar = *(char*)logBuffer;
 	ulong iStart = GetLogBuffer();
 	ulong iMax = GetLogBufferEnd();
 	ulong i;
-
-	// Set the right texture page!
-	// ( Page 8, right on the 512px boundary)
-	//pGP0 = 0xe1000688;
-	pGP0 = GP1_TEXPAGE | PAGE_8_BIT | PAGE_DITHER | PAGE_ALLOW_DISPLAY_AREA_DRAWING | 8;
+    
+    // Font's hardcoded (in this demo) to Page 8
+    // e.g. 512px, immediately offscreen on the right
+    SetPageDepth( 8, 1 );
 	
 	cursorX = 0;
 	cursorY = 0;

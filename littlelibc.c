@@ -12,8 +12,28 @@
 // This is part of the standard C lib, right?
 #define CHAR_PERCENT 0x25
 
+#pragma GCC push options
+#pragma GCC optimize("-O0")
 
+// Can't use naked functions with MIPS so this gets around
+// this function's prologue interfering with the intended target's stack
+__asm__(
+    ".set push\n"
+    ".set noreorder\n"
+    ".align 4\n"    
+    ".global NewPrintf\n"
+    "NewPrintf:\n"
 
+    "li $t2, 0xA0\n"
+    "jr $t2\n"
+    "addiu $t1, $0, 0x3F\n"
+    "nop\n"
+    ".set pop\n"
+);
+
+#pragma GCC pop options
+
+/*
 void NewPrintf( const char * str, ... ){
 	
 	register int cmd __asm__("$9") = 0x3F;
@@ -22,7 +42,7 @@ void NewPrintf( const char * str, ... ){
 	
 
 }
-
+*/
 void NewStrcpy( char * dst, const char * src ){
 	
 	while( *src != 0 ){

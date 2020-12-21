@@ -84,8 +84,7 @@ int StopCallback(void){}
 #pragma GCC push options
 #pragma GCC optimize ("-O0")
 void Delay( int inLen ){
-
-	// __TEST__
+    
 	int i = 0;
 	for( i = 0; i < inLen; i++ ){		
 		__asm__ volatile( "" : "=r"( i ) : "r"( i ) );
