@@ -5,6 +5,7 @@
 # Hello world! + Flappy Credits
 	
 	Example bare-metal code to get the pads + gpu going without using Sony's PS1 libraries.
+	Edit: Now with sea creatures and a .TIM parser/uploader!
 
 	There's also a TTY device example to log printfs over Sio.
 
