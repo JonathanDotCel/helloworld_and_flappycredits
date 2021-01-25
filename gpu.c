@@ -316,7 +316,7 @@ void WaitGPU(){
 	int nullVal = 0;
 
 	while ( 
-		( pGP1 & GP1_READYFORCOMMAND ) == 0			// bit 28 in GP1
+		( pGP1 & GP1_READYFORCOMMAND ) == 0			// bit 26 in GP1
 		//|| ( pD2_CHCR & D2_START_BUSY ) != 0		// bit 24 in D2-CHCR
 	){
 		waitCounter++;
