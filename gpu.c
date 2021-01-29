@@ -248,7 +248,7 @@ void InitGPU(){
 	}
 
 	// reset
-	pGP1 = 0;
+	pGP1 = GP1_RESET_GPU;
 	
 	EnableDisplay( 0 );
 	
