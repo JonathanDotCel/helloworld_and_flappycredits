@@ -262,6 +262,10 @@ void PadEndComms(){
 
 // 1200A (ds)
 // 1200M (ds)
+// 1200H (ds)
+
+// 10010A (ds2)
+// 10010H (ds2)
 
 // 110H (psone ds)
 
