@@ -13,7 +13,9 @@
 
 // 0x10 bytes into the scratch pad
 // anywhere's good, really, but it's 0x10 long
-#define PADBUFFER 0x1F800010
+#define PAD1BUFFER 0x1F800010
+#define pPAD1BUFFER (unsigned char*)PAD1BUFFER
 #define PAD2BUFFER 0x1F800020
+#define pPAD2BUFFER (unsigned char*)PAD2BUFFER
 
 #endif
