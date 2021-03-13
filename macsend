@@ -1,0 +1,4 @@
+#!/bin/bash
+
+mono tools/nops.exe /fast /exe helloworld.exe /m  /dev/tty.SLAB_USBtoUART
+
