@@ -1,0 +1,12 @@
+#!/bin/bash
+
+rm helloworld.exe
+rm helloworld.elf
+rm helloworld.o.o
+rm helloworld.sym
+rm helloworld.map
+rm *.temp
+
+./macmake.sh -f common.mk all
+
+

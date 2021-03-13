@@ -1,9 +1,8 @@
 #!/bin/bash
 
-
-chmod +r+w+x macshell.sh
+chmod +r+w+x macbuild.sh
 chmod +r+w+x macmake.sh
-chmod +r+w+x macsend.sh
+chmod +r+w+x macshell.sh
 
 rm *.rom
 rm *.exe
@@ -28,6 +27,6 @@ rm *.til
 rm *.id0
 rm *.id1
 
-#./macmake.sh -f buildme.mk clean
+./macmake.sh -f common.mk clean
 
 
