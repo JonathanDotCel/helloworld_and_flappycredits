@@ -73,14 +73,6 @@ unsigned long ResetEntryInt(){
 }
 
 
-
-// TODO:
-void ResetGraph(){}
-void InitHeap (unsigned long * a, unsigned long b){}
-int StopCallback(void){}
-
-
-
 #pragma GCC push options
 #pragma GCC optimize ("-O0")
 void Delay( int inLen ){
