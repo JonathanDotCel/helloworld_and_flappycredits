@@ -12,7 +12,7 @@
 #define SIO_DATA 0x1F801050
 #define SIO_STAT 0x1F801054
 #define SIO_MODE 0x1F801058
-#define SIO_CTRL 0x1F80105E
+#define SIO_CTRL 0x1F80105A
 
 
 // File control block structure
