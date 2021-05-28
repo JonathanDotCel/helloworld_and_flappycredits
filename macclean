@@ -10,7 +10,7 @@ rm *.sym
 rm *.map
 rm *.obj
 rm *.cpe
-rom *.dep
+rm *.dep
 rm *.temp
 rm *.crunch
 rm *.o
