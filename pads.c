@@ -331,8 +331,7 @@ ulong ReadPad( int whichPad, uchar * outBytes, char requestByte, char requestSta
         } else {
             goto fail;
         }
-
-        //bytesToRead = length - 3;
+        
         bytesToRead = ((lastByte & 0xF) << 1) +2; // halfwords to bytes
         bytesToRead = (bytesToRead & 0xF);
 
