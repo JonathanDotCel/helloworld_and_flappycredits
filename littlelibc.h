@@ -6,6 +6,7 @@
 #define LITTLELIBC_H
 
 #include <stdarg.h> 
+#include <stddef.h>
 
 typedef unsigned long ulong;
 typedef unsigned short ushort;
@@ -19,5 +20,6 @@ void NewMemcpy( char * dst, const char * src, ulong len );
 void NewSPrintf( char * out, const char * in, ... );
 int NewStrncmp( const char * paramA, const char * paramB, ulong len );
 int NewStrcmp( const char * paramA, const char * paramB );
+void * memset( void * dest, int inChar, size_t inLength );
 
 #endif //! ITTLELIBC_H

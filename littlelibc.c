@@ -238,3 +238,15 @@ void NewSPrintf( char * out, const char * in, ... ){
 	*writeHead = 0; // zero out the (potentially) final char.
 
 }
+
+// TODO: inline?
+void * memset( void * dest, int inChar, size_t inLength ){
+
+    uchar * s = (uchar *)dest;
+    
+    for ( size_t i = 0; i < inLength; i++ )
+        *s++ = (uchar)inChar;
+
+    return dest;
+
+}

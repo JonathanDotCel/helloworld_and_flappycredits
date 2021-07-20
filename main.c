@@ -28,6 +28,7 @@
 #include "flappycredits.h"
 #include "gpu.h"
 #include "timloader.h"
+#include "ttyredirect.h"
 
 //
 // Protos
@@ -53,6 +54,12 @@ Sprite critterSprites[NUMSPRITES];
 // out of 1000
 ulong springiness = 830;
 
+//
+// For the TTY buffer examples
+//
+
+char ttyBuffer[200];
+ulong ttyBufferPos = 0;
 
 int main(){
 	
@@ -72,7 +79,7 @@ int main(){
 	InitPads();
 
     // Enable this if you're not inheriting a TTY redirect device from Unirom, n00bROM, etc
-	//InstallTTY();
+	InstallTTY();
 	//NewPrintf( "You can now use NewPrintf() functions!\n" );	
 
     // Upload the sprites to VRAM
@@ -111,6 +118,11 @@ int main(){
 
     }
 
+    //
+    // Clear the TTY display buffer
+    //
+    
+    memset( ttyBuffer, 0, sizeof( ttyBuffer ) );
 
 	// Main loop
 	while ( 1 ){
@@ -227,7 +239,40 @@ void DoStuff(){
     }
     
 
-    
+    if ( STDIN_BytesWawiting() ){
+
+        // NOTE!
+        // Remember the PSX only has a 4 byte buffer!
+        // so if you want to recieve any faster you'll
+        // have to enter a really tight loop as soon as
+        // you see something in the buffer.
+        // or like unirom/nops, send a 4 byte id
+        // then process that and work out what length
+        // is expected afterwards
+        // otherwise you're limited to around
+        // 1 char per frame (+3)
+
+        
+        
+
+        while( STDIN_BytesWawiting() ){
+
+            ttyBuffer[ttyBufferPos++] = Raw_ReadChar();
+                        
+            if ( ttyBufferPos >= sizeof( ttyBuffer ) ){
+                memset( ttyBuffer, 0, sizeof( ttyBuffer ) );
+                ttyBufferPos = 0;
+            }
+            
+        }
+
+    }
+
+    if ( ttyBufferPos == 0 ){
+        Blah( "\n\n      Awaiting serial input from nops via keyboard\n      from 'nops /m' or 'nops /type \"blah blah\"' \n" );
+    } else {
+        Blah( "\n\n      TTY:\n %s", ttyBuffer );
+    }
     	
 }
 

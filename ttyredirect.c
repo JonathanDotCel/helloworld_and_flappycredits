@@ -2,18 +2,19 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+// References:
+//
+// https://github.com/grumpycoders/pcsx-redux
+// https://problemkaputt.de/psx-spx.htm
+// https://github.com/Lameguy64/n00brom
+// 
 
 #include "ttyredirect.h"
 #include "littlelibc.h"
 #include "utility.h"
 
 #include "drawing.h"
-
-#define SIO_DATA 0x1F801050
-#define SIO_STAT 0x1F801054
-#define SIO_MODE 0x1F801058
-#define SIO_CTRL 0x1F80105A
-
+#include "sio.h"
 
 // File control block structure
 struct SIOFCB{
@@ -33,64 +34,89 @@ struct SIOFCB{
 };
 
 
-#pragma GCC push options
-#pragma GCC optimize ("-O0")
-
 #define MODE_READ 1
 #define MODE_WRITE 2
 
+void __attribute__((section(".kttytext"))) SendCharTTY( char inChar ){
 
-void __attribute__((section(".kttytext"))) KTTYAction( struct SIOFCB * fcb, ulong inMode ){
+    unsigned short waitFlag = SR_TXU | SR_TXRDY;
+    ulong bailout = 0;
+    
+    while( ( pSIOSTATUS & waitFlag) == 0 ){
+        if ( bailout++ > 20000 )
+            break;
+    }
+
+    pSIODATA = inChar;
+
+}
+
+
+static inline int __attribute__((section(".kttytext"))) __attribute__((always_inline)) SomethingInBufferTTY() { return ((pSIOSTATUS & SR_RXRDY)); }
+
+static inline void __attribute((section(".kttytext"))) __attribute__((always_inline)) AckTTY() { pSIOCONTROL |= CR_ERRRST; }
+
+static uchar __attribute__((section(".kttytext"))) ReadCharTTY() {
+
+    volatile ulong optWait = 0;
+
+    // while data in buffer
+    while ( !SomethingInBufferTTY() ) {
+        optWait++;
+    }
+
+    // Has to be this order
+    char rVal = pSIODATA;
+
+    // Ack
+    AckTTY();
+
+    return rVal;
+
+}
+
+void __attribute__((section(".kttytext"))) SendStringTTY( char * inString, int inLength ){
+
+    for ( int i = 0; i < inLength; i++){
+        SendCharTTY( *inString++ );
+    }
+
+}
+
+void __attribute__((section(".kttytext"))) KTTYAction(struct SIOFCB * fcb, ulong inMode){
 
     ulong i = 0;
     ulong bailout = 0;
-    
-    if( inMode != MODE_WRITE )
-        return;
-    
+
     ulong transferLength = fcb->FCB_TLEN;
-    ulong readAddr = fcb->FCB_TADDR;
+    char * readAddr = fcb->FCB_TADDR;
 
-    for( i = readAddr; i < readAddr + transferLength; i++ ){
+    if (inMode == MODE_WRITE){
+    
+        SendStringTTY( readAddr, transferLength );
 
-        bailout = 0;
-        
-        // SR_TXU | SR_TXRDY
-        while( (*(uchar*)SIO_STAT & 0x05) == 0 ){
-            if ( bailout++ > 8000 )
-                break;
+    } else {
+
+        for( int i = 0; i < transferLength; i++ ){
+            *readAddr++ = ReadCharTTY();
         }
-
-        *(uchar*)SIO_DATA = *(uchar*)readAddr;
 
     }
     
-
-}
-
-void __attribute__((section(".kttytext"))) KTTYNull(){
-    
-}
-
-ulong __attribute__((section(".kttytext"))) KTTYReturn0(){
-    return 0;    
 }
 
 
-#pragma GCC pop options
 
+static void __attribute__((section(".kttytext"))) KTTYNull() {}
 
+static ulong __attribute__((section(".kttytext"))) KTTYReturn0() { return 0; }
 
-char deviceName[] = "tty";
-char deviceDesc[] = "SIO TTY";
+static struct ttyDevice {
 
-
-struct ttyDevice{
-
-    char * deviceName;
+    const char * deviceName;
     ulong flags;
     ulong blockSize;
-    char * deviceDesc;
+    const char * deviceDesc;
     
     void * init;
     void * open;
@@ -108,21 +134,18 @@ struct ttyDevice{
     void * rename;
     void * deinit;
     void * check;
-
-
 } defaultTTYDevice = {
-
-    (char*)deviceName,
+    "tty",
     3,
-    0,
-    (char*)deviceDesc,
+    1,
+    "SIO_TTY",
 
     &KTTYNull,      // init
-    &KTTYReturn0,      // open
-    &KTTYAction,      // action
-    &KTTYReturn0,      // close
+    &KTTYReturn0,   // open
+    &KTTYAction,    // action
+    &KTTYReturn0,   // close
 
-    &KTTYReturn0,      // ioctl
+    &KTTYReturn0,   // ioctl
     &KTTYNull,      // read
     &KTTYNull,      // write
     &KTTYNull,      // erase
@@ -136,69 +159,56 @@ struct ttyDevice{
     &KTTYNull,      // rename
     &KTTYNull,      // deinit/remove
     &KTTYNull,      // check
-
-
 };
 
-char ttyInstalled = 0;
+static char ttyInstalled = 0;
 
-ulong IsTTYInstalled(){
-    return ttyInstalled;
-}
-
-
+ulong IsTTYInstalled() { return ttyInstalled; }
 
 void RemoveTTY(){
 
-    char* namePointer = (char*)&deviceName;
-
-    if ( !ttyInstalled )
-        return;
-
+    ulong wasCritical = EnterCritical();
+    
     // Close stdin
     CloseFile( 0 );
-    
+
     // Close stdout
     CloseFile( 1 );
     
-    // Remove the dummy TTY device
-    RemoveDevice( (char*)&namePointer );
+    // Remove the dummy TTY device    
+    RemoveDevice( defaultTTYDevice.deviceName );
+    
+    if ( !wasCritical ) ExitCritical();
 
 }
 
 void InstallTTY(){
 
-    if ( ttyInstalled )
-        return;
+    if ( ttyInstalled ) return;
 
     ulong wasCritical = EnterCritical();
     
     RemoveTTY();
     
     NewMemcpy( (char*)&__ktty_dest_start, (char*)&__ktty_src, (ulong)&__ktty_length );
-
-    // need a wee bit more stack for these ones...
-    __asm__ volatile( "addiu $sp, $sp, -0x08\n\t" );
-
+    
     AddDevice( (void*)&defaultTTYDevice );
 
     // Open stdin and stdout again
-    OpenFile( deviceName, 2 );
-    OpenFile( deviceName, 1 );
-    
-    __asm__ volatile( "addiu $sp, $sp, 0x08\n\t" );
+    char fd1 = OpenFile( defaultTTYDevice.deviceName, 2 );
+    char fd2 = OpenFile( defaultTTYDevice.deviceName, 1 );
+   
+    if ( !wasCritical ) ExitCritical();
 
-    if ( !wasCritical )
-        ExitCritical();
+    //Blah( "Files: %x,%x\n", fd1, fd2 );
+    //HoldMessage();
 
     ttyInstalled = 1;
     
 }
 
-
 void TTYViewMemoryAllocation(){
-
-    ClearScreenText();
+    ClearTextBuffer();
 
     Blah( "\n\n\n\n\n\n" );
     Blah( "__ktty_src %x\n", (ulong)&__ktty_src );    
@@ -207,5 +217,62 @@ void TTYViewMemoryAllocation(){
     Blah( "__ktty_dest_end %x\n", (ulong)&__ktty_dest_end );
 
     HoldMessage();
+}
+
+
+
+// For use with TTYRedirect when using stdin / readchar
+// They won't work till this TTY driver is installed.
+#pragma section non-relocated utility functions
+
+
+char BIOS_ReadChar(){
+    register int cmd asm("t1") = 0x3B;
+    __asm__ volatile("" : "=r"(cmd) : "r"(cmd));
+    return ((char(*)())0xA0)();
+}
+
+void BIOS_WriteChar( char inChar ){
+    register int cmd asm("t1") = 0x3C;
+    __asm__ volatile("" : "=r"(cmd) : "r"(cmd));
+    return ((char(*)(char))0xA0)( inChar );
+}
+
+ulong BIOS_ReadString( char * dest ){
+    register int cmd asm("t1") = 0x3D;
+    __asm__ volatile("" : "=r"(cmd) : "r"(cmd));
+    return ((ulong(*)(char*))0xA0)( dest );
+}
+
+void BIOS_WriteString( const char * src ){
+    register int cmd asm("t1") = 0x3E;
+    __asm__ volatile("" : "=r"(cmd) : "r"(cmd));
+    return ((ulong(*)(char*))0xA0)( src );
+}
+
+char Raw_ReadChar(){
+
+    //use the in-kernel address
+    // also uses the in-kernel address
+    // gcc will attempt to make this a regular function 
+    // call and hit R_MIPS_26 without volatile
+    volatile ulong addr = &ReadCharTTY;
+    return ((char(*)())addr)();
 
 }
+
+void Raw_WriteChar( char c ){
+
+    // also uses the in-kernel address
+    // gcc will attempt to make this a regular function 
+    // call and hit R_MIPS_26 without volatile
+    volatile ulong addr = &SendCharTTY;    
+    ((void(*)(char))addr)( c );
+
+}
+
+char __attribute__((always_inline)) STDIN_BytesWawiting(){
+    return (pSIOSTATUS & SR_RXRDY) != 0;
+}
+
+#pragma endsection non-relocated utility functions
