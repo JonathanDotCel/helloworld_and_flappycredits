@@ -1,0 +1,43 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+
+        {
+            "type": "gdb",
+            "request": "attach",
+            "name": "(gdb) Launch FlappyCredits",
+            "target": "localhost:8888",
+            "remote": true,
+            "stopAtConnect": true,
+            "executable": "./helloworld.elf",
+            "gdbpath": "/usr/bin/gdb-multiarch",
+            "windows": {
+                "gdbpath": "C:/gdb-multiarch/bin/gdb.exe",
+            },
+            "cwd": "${workspaceRoot}",
+            "autorun": [
+                "set remote interrupt-sequence Ctrl-C",
+                "set substitute-path /project .",
+                "load ./helloworld.elf",
+                "tbreak main",
+                //"continue",
+            ],
+            "valuesFormatting": "parseText"
+        },
+
+
+        {
+            "name": "(gdb) Launch Nops GDB Bridge 127.0.0.1:8888",
+            "type": "cppdbg",
+            "request": "launch",
+            "preLaunchTask": "launch_nops",
+            "environment": [],
+            "externalConsole": true,
+            "setupCommands": []
+        }
+    ]
+}
