@@ -133,7 +133,7 @@ int main(){
 		
 		C64Border();
         
-		Blah( "\n\n\n\n\n\n\n\n\n                Hello world!     -     Frame %d\n\n\n", GetFrameCount() );
+		Blah( "\n\n\n\n\n\n\n                Hello world!     -     Frame %d\n\n\n", GetFrameCount() );
 		Blah( "        Dpad  : move block\n" );
 		Blah( "        X     : flappy credits\n" );
 		Blah( "        O     : reboot\n" );
@@ -269,10 +269,15 @@ void DoStuff(){
     }
 
     if ( ttyBufferPos == 0 ){
-        Blah( "\n\n      Awaiting serial input from nops via keyboard\n      from 'nops /m' or 'nops /type \"blah blah\"' \n" );
+        Blah( "\n\n        Waiting for input from nops via keyboard\n      from 'nops /m' or 'nops /type \"blah blah\"' \n" );
     } else {
-        Blah( "\n\n      TTY:\n %s", ttyBuffer );
+        Blah( "\n\n        TTY:\n %s", ttyBuffer );
     }
+
+    Blah( "\n\n\n" );
+
+    Blah( "        Documentation:  http://unirom.github.io\n" );
+    Blah( "        Discord:        http://psx.dev\n" );
     	
 }
 
