@@ -13,6 +13,8 @@
 	Big thanks to Nicolas Noble over at https://github.com/grumpycoders/pcsx-redux/ 
 	for the "nugget" toolchain/build environment!
     
+    twit: https://twitter.com/jonathandotcel
+    discord: https://psx.dev
     
 # Installation
 
